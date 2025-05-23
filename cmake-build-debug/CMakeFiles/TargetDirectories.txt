@@ -1,0 +1,3 @@
+D:/src/windows/CLIProxyServer/cmake-build-debug/CMakeFiles/CLIProxyServer.dir
+D:/src/windows/CLIProxyServer/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/src/windows/CLIProxyServer/cmake-build-debug/CMakeFiles/rebuild_cache.dir
