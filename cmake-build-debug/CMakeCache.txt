@@ -39,8 +39,8 @@ CMAKE_COLOR_DIAGNOSTICS:BOOL=ON
 //No help, variable specified on the command line.
 CMAKE_CXX_COMPILER:UNINITIALIZED=/usr/sbin/g++
 
-//C compiler
-CMAKE_C_COMPILER:STRING=/usr/sbin/gcc
+//No help, variable specified on the command line.
+CMAKE_C_COMPILER:UNINITIALIZED=/usr/sbin/gcc
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler

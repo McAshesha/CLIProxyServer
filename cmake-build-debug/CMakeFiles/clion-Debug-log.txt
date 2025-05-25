@@ -1,16 +1,4 @@
 /usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/usr/sbin/ninja -DCMAKE_C_COMPILER=/usr/sbin/gcc -DCMAKE_CXX_COMPILER=/usr/sbin/g++ -G Ninja -S /mnt/d/src/windows/CLIProxyServer -B /mnt/d/src/windows/CLIProxyServer/cmake-build-debug
--- The C compiler identification is GNU 14.2.1
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: /usr/sbin/gcc - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Configuring done (2.6s)
-CMake Warning:
-  Manually-specified variables were not used by the project:
-
-    CMAKE_CXX_COMPILER
-
-
+-- Configuring done (0.0s)
 -- Generating done (0.1s)
 -- Build files have been written to: /mnt/d/src/windows/CLIProxyServer/cmake-build-debug
