@@ -53,6 +53,7 @@ build CMakeFiles/CLIProxyServer.dir/src/main.c.o: C_COMPILER__CLIProxyServer_uns
   CONFIG = Debug
   DEP_FILE = CMakeFiles/CLIProxyServer.dir/src/main.c.o.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -I/mnt/d/src/windows/CLIProxyServer/src/include
   OBJECT_DIR = CMakeFiles/CLIProxyServer.dir
   OBJECT_FILE_DIR = CMakeFiles/CLIProxyServer.dir/src
 
@@ -60,6 +61,7 @@ build CMakeFiles/CLIProxyServer.dir/src/socks5.c.o: C_COMPILER__CLIProxyServer_u
   CONFIG = Debug
   DEP_FILE = CMakeFiles/CLIProxyServer.dir/src/socks5.c.o.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -I/mnt/d/src/windows/CLIProxyServer/src/include
   OBJECT_DIR = CMakeFiles/CLIProxyServer.dir
   OBJECT_FILE_DIR = CMakeFiles/CLIProxyServer.dir/src
 
@@ -67,6 +69,7 @@ build CMakeFiles/CLIProxyServer.dir/src/logger.c.o: C_COMPILER__CLIProxyServer_u
   CONFIG = Debug
   DEP_FILE = CMakeFiles/CLIProxyServer.dir/src/logger.c.o.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -I/mnt/d/src/windows/CLIProxyServer/src/include
   OBJECT_DIR = CMakeFiles/CLIProxyServer.dir
   OBJECT_FILE_DIR = CMakeFiles/CLIProxyServer.dir/src
 
@@ -74,6 +77,7 @@ build CMakeFiles/CLIProxyServer.dir/src/utils.c.o: C_COMPILER__CLIProxyServer_un
   CONFIG = Debug
   DEP_FILE = CMakeFiles/CLIProxyServer.dir/src/utils.c.o.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -I/mnt/d/src/windows/CLIProxyServer/src/include
   OBJECT_DIR = CMakeFiles/CLIProxyServer.dir
   OBJECT_FILE_DIR = CMakeFiles/CLIProxyServer.dir/src
 
@@ -140,14 +144,14 @@ build all: phony CLIProxyServer
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja /mnt/d/src/windows/CLIProxyServer/cmake-build-debug/cmake_install.cmake: RERUN_CMAKE | /mnt/d/src/windows/CLIProxyServer/CMakeLists.txt /usr/share/cmake/Modules/CMakeCInformation.cmake /usr/share/cmake/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake/Modules/CMakeGenericSystem.cmake /usr/share/cmake/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake/Modules/CMakeLanguageInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake/Modules/Compiler/GNU-C.cmake /usr/share/cmake/Modules/Compiler/GNU.cmake /usr/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake /usr/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake /usr/share/cmake/Modules/Linker/GNU-C.cmake /usr/share/cmake/Modules/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU-C.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake/Modules/Platform/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake/Modules/Platform/Linux.cmake /usr/share/cmake/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/4.0.2-dirty/CMakeCCompiler.cmake CMakeFiles/4.0.2-dirty/CMakeSystem.cmake
+build build.ninja /mnt/d/src/windows/CLIProxyServer/cmake-build-debug/cmake_install.cmake: RERUN_CMAKE | /mnt/d/src/windows/CLIProxyServer/CMakeLists.txt /usr/share/cmake/Modules/CMakeCInformation.cmake /usr/share/cmake/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake/Modules/CMakeGenericSystem.cmake /usr/share/cmake/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake/Modules/CMakeLanguageInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake/Modules/CheckCSourceCompiles.cmake /usr/share/cmake/Modules/CheckIncludeFile.cmake /usr/share/cmake/Modules/CheckLibraryExists.cmake /usr/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake/Modules/Compiler/GNU-C.cmake /usr/share/cmake/Modules/Compiler/GNU.cmake /usr/share/cmake/Modules/FindPackageHandleStandardArgs.cmake /usr/share/cmake/Modules/FindPackageMessage.cmake /usr/share/cmake/Modules/FindThreads.cmake /usr/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake /usr/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake /usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake /usr/share/cmake/Modules/Linker/GNU-C.cmake /usr/share/cmake/Modules/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU-C.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake/Modules/Platform/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake/Modules/Platform/Linux.cmake /usr/share/cmake/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/4.0.2-dirty/CMakeCCompiler.cmake CMakeFiles/4.0.2-dirty/CMakeSystem.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build /mnt/d/src/windows/CLIProxyServer/CMakeLists.txt /usr/share/cmake/Modules/CMakeCInformation.cmake /usr/share/cmake/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake/Modules/CMakeGenericSystem.cmake /usr/share/cmake/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake/Modules/CMakeLanguageInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake/Modules/Compiler/GNU-C.cmake /usr/share/cmake/Modules/Compiler/GNU.cmake /usr/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake /usr/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake /usr/share/cmake/Modules/Linker/GNU-C.cmake /usr/share/cmake/Modules/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU-C.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake/Modules/Platform/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake/Modules/Platform/Linux.cmake /usr/share/cmake/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/4.0.2-dirty/CMakeCCompiler.cmake CMakeFiles/4.0.2-dirty/CMakeSystem.cmake: phony
+build /mnt/d/src/windows/CLIProxyServer/CMakeLists.txt /usr/share/cmake/Modules/CMakeCInformation.cmake /usr/share/cmake/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake/Modules/CMakeGenericSystem.cmake /usr/share/cmake/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake/Modules/CMakeLanguageInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake/Modules/CheckCSourceCompiles.cmake /usr/share/cmake/Modules/CheckIncludeFile.cmake /usr/share/cmake/Modules/CheckLibraryExists.cmake /usr/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake/Modules/Compiler/GNU-C.cmake /usr/share/cmake/Modules/Compiler/GNU.cmake /usr/share/cmake/Modules/FindPackageHandleStandardArgs.cmake /usr/share/cmake/Modules/FindPackageMessage.cmake /usr/share/cmake/Modules/FindThreads.cmake /usr/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake /usr/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake /usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake /usr/share/cmake/Modules/Linker/GNU-C.cmake /usr/share/cmake/Modules/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU-C.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake/Modules/Platform/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake/Modules/Platform/Linux.cmake /usr/share/cmake/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/4.0.2-dirty/CMakeCCompiler.cmake CMakeFiles/4.0.2-dirty/CMakeSystem.cmake: phony
 
 
 #############################################

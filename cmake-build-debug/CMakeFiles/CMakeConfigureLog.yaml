@@ -248,3 +248,35 @@ events:
       Running the C compiler's linker: "/usr/sbin/ld" "-v"
       GNU ld (GNU Binutils) 2.43.1
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/usr/share/cmake/Modules/CheckCSourceCompiles.cmake:58 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/FindThreads.cmake:97 (check_c_source_compiles)"
+      - "/usr/share/cmake/Modules/FindThreads.cmake:163 (_threads_check_libc)"
+      - "CMakeLists.txt:24 (find_package)"
+    checks:
+      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
+    directories:
+      source: "/mnt/d/src/windows/CLIProxyServer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LtN26R"
+      binary: "/mnt/d/src/windows/CLIProxyServer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LtN26R"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: '/mnt/d/src/windows/CLIProxyServer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LtN26R'
+        
+        Run Build Command(s): /usr/sbin/ninja -v cmTC_04bcc
+        [1/2] /usr/sbin/gcc -DCMAKE_HAVE_LIBC_PTHREAD  -std=gnu11 -fdiagnostics-color=always -o CMakeFiles/cmTC_04bcc.dir/src.c.o -c /mnt/d/src/windows/CLIProxyServer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LtN26R/src.c
+        [2/2] : && /usr/sbin/gcc   CMakeFiles/cmTC_04bcc.dir/src.c.o -o cmTC_04bcc   && :
+        
+      exitCode: 0
+...
