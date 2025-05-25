@@ -15,6 +15,9 @@ set(SOURCES
         src/socks5.c
         src/logger.c
         src/utils.c
+        src/server.c
+        src/client.c
+        src/relay.c
 )
 
 # Define the executable
