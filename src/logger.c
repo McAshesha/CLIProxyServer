@@ -1,44 +1,63 @@
-#include "include/logger.h"
+#include "logger.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <stdarg.h>
+#include <time.h>
+#include <string.h>
 
-void log_info(const char *format, ...)
+static FILE *log_file = NULL;
+static log_level_t current_level = LOG_LEVEL_INFO;
+
+void log_init(const char *filename, log_level_t level)
 {
-    va_list args;
-    va_start(args, format);
-    // оценим длину и выделим буфер
-    int needed = vsnprintf(NULL, 0, format, args);
-    va_end(args);
-
-    char *buf = malloc(needed + 1);
-    va_start(args, format);
-    vsnprintf(buf, needed + 1, format, args);
-    va_end(args);
-
-    char *line = buf;
-    char *nl;
-    while ((nl = strchr(line, '\n')))
+    current_level = level;
+    if (filename != NULL && strcmp(filename, "") != 0)
     {
-        *nl = '\0';
-        fprintf(stdout, "[INFO] %s\n", line);
-        line = nl + 1;
+        log_file = fopen(filename, "a");
+        if (!log_file)
+        {
+            log_file = stdout;
+        }
     }
-    // остаток после последнего '\n'
-    if (*line)
-        fprintf(stdout, "[INFO] %s\n", line);
-
-    free(buf);
+    else
+    {
+        log_file = stdout;
+    }
 }
 
-
-void log_error(const char *format, ...)
+void log_message(log_level_t level, const char *fmt, ...)
 {
-    va_list args;
-    va_start(args, format);
-    fprintf(stderr, "[ERROR] ");
-    vfprintf(stderr, format, args);
-    fprintf(stderr, "\n");
-    va_end(args);
+    if (level < current_level) return;
+
+    // Формируем временную метку
+    time_t t = time(NULL);
+    struct tm tm_info;
+    localtime_r(&t, &tm_info);
+
+    char timestamp[32];
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", &tm_info);
+
+    static const char *labels[] = {"INFO", "WARNING", "ERROR"};
+    char header[64];
+    snprintf(header, sizeof(header), "[%s] [%s] ", timestamp, labels[level]);
+
+    // Форматируем само сообщение во временный буфер
+    char msgbuf[1024];
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(msgbuf, sizeof(msgbuf), fmt, ap);
+    va_end(ap);
+
+    // Разбиваем по '\n' и выводим каждую строку с префиксом
+    char *start = msgbuf;
+    char *newline;
+    while ((newline = strchr(start, '\n')) != NULL) {
+        *newline = '\0';
+        fprintf(log_file, "%s%s\n", header, start);
+        start = newline + 1;
+    }
+    if (*start) {
+        fprintf(log_file, "%s%s\n", header, start);
+    }
+
+    fflush(log_file);
 }

@@ -57,9 +57,9 @@ build CMakeFiles/CLIProxyServer.dir/src/main.c.o: C_COMPILER__CLIProxyServer_uns
   OBJECT_DIR = CMakeFiles/CLIProxyServer.dir
   OBJECT_FILE_DIR = CMakeFiles/CLIProxyServer.dir/src
 
-build CMakeFiles/CLIProxyServer.dir/src/socks5.c.o: C_COMPILER__CLIProxyServer_unscanned_Debug /mnt/d/src/windows/CLIProxyServer/src/socks5.c || cmake_object_order_depends_target_CLIProxyServer
+build CMakeFiles/CLIProxyServer.dir/src/buff.c.o: C_COMPILER__CLIProxyServer_unscanned_Debug /mnt/d/src/windows/CLIProxyServer/src/buff.c || cmake_object_order_depends_target_CLIProxyServer
   CONFIG = Debug
-  DEP_FILE = CMakeFiles/CLIProxyServer.dir/src/socks5.c.o.d
+  DEP_FILE = CMakeFiles/CLIProxyServer.dir/src/buff.c.o.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   INCLUDES = -I/mnt/d/src/windows/CLIProxyServer/src/include
   OBJECT_DIR = CMakeFiles/CLIProxyServer.dir
@@ -73,33 +73,9 @@ build CMakeFiles/CLIProxyServer.dir/src/logger.c.o: C_COMPILER__CLIProxyServer_u
   OBJECT_DIR = CMakeFiles/CLIProxyServer.dir
   OBJECT_FILE_DIR = CMakeFiles/CLIProxyServer.dir/src
 
-build CMakeFiles/CLIProxyServer.dir/src/utils.c.o: C_COMPILER__CLIProxyServer_unscanned_Debug /mnt/d/src/windows/CLIProxyServer/src/utils.c || cmake_object_order_depends_target_CLIProxyServer
-  CONFIG = Debug
-  DEP_FILE = CMakeFiles/CLIProxyServer.dir/src/utils.c.o.d
-  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
-  INCLUDES = -I/mnt/d/src/windows/CLIProxyServer/src/include
-  OBJECT_DIR = CMakeFiles/CLIProxyServer.dir
-  OBJECT_FILE_DIR = CMakeFiles/CLIProxyServer.dir/src
-
 build CMakeFiles/CLIProxyServer.dir/src/server.c.o: C_COMPILER__CLIProxyServer_unscanned_Debug /mnt/d/src/windows/CLIProxyServer/src/server.c || cmake_object_order_depends_target_CLIProxyServer
   CONFIG = Debug
   DEP_FILE = CMakeFiles/CLIProxyServer.dir/src/server.c.o.d
-  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
-  INCLUDES = -I/mnt/d/src/windows/CLIProxyServer/src/include
-  OBJECT_DIR = CMakeFiles/CLIProxyServer.dir
-  OBJECT_FILE_DIR = CMakeFiles/CLIProxyServer.dir/src
-
-build CMakeFiles/CLIProxyServer.dir/src/client.c.o: C_COMPILER__CLIProxyServer_unscanned_Debug /mnt/d/src/windows/CLIProxyServer/src/client.c || cmake_object_order_depends_target_CLIProxyServer
-  CONFIG = Debug
-  DEP_FILE = CMakeFiles/CLIProxyServer.dir/src/client.c.o.d
-  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
-  INCLUDES = -I/mnt/d/src/windows/CLIProxyServer/src/include
-  OBJECT_DIR = CMakeFiles/CLIProxyServer.dir
-  OBJECT_FILE_DIR = CMakeFiles/CLIProxyServer.dir/src
-
-build CMakeFiles/CLIProxyServer.dir/src/relay.c.o: C_COMPILER__CLIProxyServer_unscanned_Debug /mnt/d/src/windows/CLIProxyServer/src/relay.c || cmake_object_order_depends_target_CLIProxyServer
-  CONFIG = Debug
-  DEP_FILE = CMakeFiles/CLIProxyServer.dir/src/relay.c.o.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   INCLUDES = -I/mnt/d/src/windows/CLIProxyServer/src/include
   OBJECT_DIR = CMakeFiles/CLIProxyServer.dir
@@ -113,7 +89,7 @@ build CMakeFiles/CLIProxyServer.dir/src/relay.c.o: C_COMPILER__CLIProxyServer_un
 #############################################
 # Link the executable CLIProxyServer
 
-build CLIProxyServer: C_EXECUTABLE_LINKER__CLIProxyServer_Debug CMakeFiles/CLIProxyServer.dir/src/main.c.o CMakeFiles/CLIProxyServer.dir/src/socks5.c.o CMakeFiles/CLIProxyServer.dir/src/logger.c.o CMakeFiles/CLIProxyServer.dir/src/utils.c.o CMakeFiles/CLIProxyServer.dir/src/server.c.o CMakeFiles/CLIProxyServer.dir/src/client.c.o CMakeFiles/CLIProxyServer.dir/src/relay.c.o
+build CLIProxyServer: C_EXECUTABLE_LINKER__CLIProxyServer_Debug CMakeFiles/CLIProxyServer.dir/src/main.c.o CMakeFiles/CLIProxyServer.dir/src/buff.c.o CMakeFiles/CLIProxyServer.dir/src/logger.c.o CMakeFiles/CLIProxyServer.dir/src/server.c.o
   CONFIG = Debug
   DEP_FILE = CMakeFiles/CLIProxyServer.dir/link.d
   FLAGS = -g
