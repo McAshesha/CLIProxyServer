@@ -1,4 +1,4 @@
 /usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/usr/sbin/ninja -DCMAKE_C_COMPILER=/usr/sbin/gcc -DCMAKE_CXX_COMPILER=/usr/sbin/g++ -G Ninja -S /mnt/d/src/windows/CLIProxyServer -B /mnt/d/src/windows/CLIProxyServer/cmake-build-debug
 -- Configuring done (0.1s)
--- Generating done (0.2s)
+-- Generating done (0.3s)
 -- Build files have been written to: /mnt/d/src/windows/CLIProxyServer/cmake-build-debug
