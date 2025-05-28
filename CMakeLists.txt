@@ -16,6 +16,10 @@ set(SOURCES
         src/buff.c
         src/logger.c
         src/server.c
+        src/tunnel.c
+        src/sock.c
+        src/protocol.c
+        src/resolver.c
 )
 
 
