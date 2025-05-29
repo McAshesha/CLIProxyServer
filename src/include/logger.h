@@ -1,34 +1,29 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-
 typedef enum log_level
 {
-    LOG_LEVEL_INFO,
-    LOG_LEVEL_WARNING,
-    LOG_LEVEL_ERROR
-}
-log_level_t;
+    INFO,
+    WARNING,
+    ERROR
+} log_level_t;
 
 
-// Инициализация логгера (можно задать файл, уровень и т.п.)
-void log_init(const char *filename, log_level_t level);
+void       log_init(const char *filename, log_level_t level);
 
-// Основная функция логирования
-void log_message(log_level_t level, const char *fmt, ...);
+void       log_message(log_level_t level, const char *fmt, ...);
 
-void extra_log_message(log_level_t level, const char *fmt, ...);
+void       extra_log_message(log_level_t level, const char *fmt, ...);
 
 
-// Удобные макросы
-#define LOG_INFO(...)    log_message(LOG_LEVEL_INFO,    __VA_ARGS__)
+#define    LOG_INFO(...)         log_message(INFO,    __VA_ARGS__)
 
-#define LOG_WARN(...)    log_message(LOG_LEVEL_WARNING, __VA_ARGS__)
+#define    LOG_WARN(...)         log_message(WARNING, __VA_ARGS__)
 
-#define LOG_ERROR(...)   log_message(LOG_LEVEL_ERROR,   __VA_ARGS__)
+#define    LOG_ERROR(...)        log_message(ERROR,   __VA_ARGS__)
 
-#define EXTRA_LOG_WARN(...)    extra_log_message(LOG_LEVEL_WARNING, __VA_ARGS__)
+#define    EXTRA_LOG_WARN(...)   extra_log_message(WARNING, __VA_ARGS__)
 
-#define EXTRA_LOG_ERROR(...)   extra_log_message(LOG_LEVEL_ERROR,   __VA_ARGS__)
+#define    EXTRA_LOG_ERROR(...)  extra_log_message(ERROR,   __VA_ARGS__)
 
 #endif // LOGGER_H

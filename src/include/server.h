@@ -4,26 +4,23 @@
 
 typedef void read_cb(int fd, void *ud);
 
-
 typedef struct server
 {
-    int listenfd;
-    read_cb *read_handle;
-    int epollfd;
-    char username[255];
-    char passwd[255];
-}
-server_t;
+    int        listenfd;
+    read_cb   *read_handle;
+    int        epollfd;
+    char       username[255];
+    char       passwd[255];
+} server_t;
 
 
-extern server_t SERVER;
+extern  server_t SERVER;
 
+void    sigign();
 
-void sigign();
+int     server_start();
 
-int server_start();
-
-int server_init(char *host, char *port, char *username, char *passwd);
+int     server_init(char *host, char *port, char *username, char *passwd);
 
 
 #endif //SERVER_H

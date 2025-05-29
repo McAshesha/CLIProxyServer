@@ -1,11 +1,8 @@
 #ifndef TUNNEL_H
 #define TUNNEL_H
 
-
 #include <stddef.h>
-
 #include "protocol.h"
-
 
 typedef struct sock sock_t;
 
@@ -15,7 +12,7 @@ typedef enum tunnel_state
     auth_state,
     request_state,
     connecting_state, // connecting to remote
-    connected_state,  // connected to remote
+    connected_state   // connected to remote
 }
 tunnel_state_t;
 
@@ -32,17 +29,16 @@ struct tunnel
     int closed;
 };
 
+tunnel_t*   tunnel_create(int fd);
 
-tunnel_t* tunnel_create(int fd);
+void        tunnel_release(tunnel_t *tunnel);
 
-void tunnel_release(tunnel_t *tunnel);
+void        tunnel_read_handle(int fd, void *ud);
 
-void tunnel_read_handle(int fd, void *ud);
+void        tunnel_write_handle(int fd, void *ud);
 
-void tunnel_write_handle(int fd, void *ud);
+int         tunnel_write_client(tunnel_t *tunnel, void *src, size_t size);
 
-int tunnel_write_client(tunnel_t *tunnel, void *src, size_t size);
+int         tunnel_connect_to_remote(tunnel_t *tunnel);
 
-int tunnel_connect_to_remote(tunnel_t *tunnel);
-
-#endif //TUNNEL_H
+#endif // TUNNEL_H

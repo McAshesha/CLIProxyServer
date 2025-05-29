@@ -4,10 +4,10 @@
 #include <time.h>
 #include <string.h>
 
-static FILE *log_file = NULL;
-static log_level_t current_level = LOG_LEVEL_INFO;
+static FILE         *log_file      = NULL;
+static log_level_t   current_level = INFO;
 
-void log_init(const char *filename, log_level_t level)
+void       log_init(const char *filename, log_level_t level)
 {
     current_level = level;
     if (filename != NULL && strcmp(filename, "") != 0)
@@ -24,34 +24,31 @@ void log_init(const char *filename, log_level_t level)
     }
 }
 
-void log_message(log_level_t level, const char *fmt, ...)
+void       log_message(log_level_t level, const char *fmt, ...)
 {
     if (level < current_level)
     {
         return;
     }
 
-    // Формируем временную метку
-    time_t t = time(NULL);
-    struct tm tm_info;
+    time_t     t        = time(NULL);
+    struct tm  tm_info;
     localtime_r(&t, &tm_info);
 
     char timestamp[32];
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", &tm_info);
 
     static const char *labels[] = {"INFO", "WARNING", "ERROR"};
-    char header[64];
+    char        header[64];
     snprintf(header, sizeof(header), "[%s] [%s] ", timestamp, labels[level]);
 
-    // Форматируем само сообщение во временный буфер
-    char msgbuf[1024];
-    va_list ap;
-    va_start(ap, fmt);
-    vsnprintf(msgbuf, sizeof(msgbuf), fmt, ap);
-    va_end(ap);
+    char    msgbuf[1024];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(msgbuf, sizeof(msgbuf), fmt, args);
+    va_end(args);
 
-    // Разбиваем по '\n' и выводим каждую строку с префиксом
-    char *start = msgbuf;
+    char *start   = msgbuf;
     char *newline;
     while ((newline = strchr(start, '\n')) != NULL)
     {
@@ -67,36 +64,33 @@ void log_message(log_level_t level, const char *fmt, ...)
     fflush(log_file);
 }
 
-void extra_log_message(log_level_t level, const char *fmt, ...)
+void       extra_log_message(log_level_t level, const char *fmt, ...)
 {
-    if (level < current_level || level < LOG_LEVEL_WARNING)
+    if (level < current_level || level < WARNING)
     {
         return;
     }
 
     fprintf(stdout, "\n");
 
-    // Формируем временную метку
-    time_t t = time(NULL);
-    struct tm tm_info;
+    time_t     t        = time(NULL);
+    struct tm  tm_info;
     localtime_r(&t, &tm_info);
 
     char timestamp[32];
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", &tm_info);
 
     static const char *labels[] = {"INFO", "WARNING", "ERROR"};
-    char header[64];
+    char        header[64];
     snprintf(header, sizeof(header), "[%s] [%s] ", timestamp, labels[level]);
 
-    // Форматируем само сообщение во временный буфер
-    char msgbuf[1024];
-    va_list ap;
-    va_start(ap, fmt);
-    vsnprintf(msgbuf, sizeof(msgbuf), fmt, ap);
-    va_end(ap);
+    char    msgbuf[1024];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(msgbuf, sizeof(msgbuf), fmt, args);
+    va_end(args);
 
-    // Разбиваем по '\n' и выводим каждую строку с префиксом
-    char *start = msgbuf;
+    char *start   = msgbuf;
     char *newline;
     while ((newline = strchr(start, '\n')) != NULL)
     {
@@ -119,4 +113,3 @@ void extra_log_message(log_level_t level, const char *fmt, ...)
 
     fflush(log_file);
 }
-

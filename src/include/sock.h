@@ -6,42 +6,42 @@
 #include "tunnel.h"
 
 
-typedef void read_cb(int fd, void *ud);
-typedef void write_cb(int fd, void *ud);
+typedef void     read_cb(int fd, void *ud);
+typedef void     write_cb(int fd, void *ud);
 
-
-typedef enum sock_state {
+typedef enum sock_state
+{
     sock_connecting,
     sock_connected,
     sock_halfclosed,
     sock_closed,
 } sock_state_t;
 
-struct sock {
-    int fd;
-    read_cb *read_handle;
-    write_cb *write_handle;
-    buffer_t *read_buffer;
-    buffer_t *write_buffer;
-    tunnel_t *tunnel;
-    sock_state_t state;
-    int is_client;
+struct sock
+{
+    int           fd;
+    read_cb      *read_handle;
+    write_cb     *write_handle;
+    buffer_t     *read_buffer;
+    buffer_t     *write_buffer;
+    tunnel_t     *tunnel;
+    sock_state_t  state;
+    int           is_client;
 };
 
 
-int epoll_add(sock_t *sock);
+int     epoll_add(sock_t *sock);
 
-int epoll_modify(sock_t *sock, int writable, int readable);
+int     epoll_modify(sock_t *sock, int writable, int readable);
 
-sock_t* sock_create(int fd, sock_state_t state, int isclient, tunnel_t * tunnel);
+sock_t* sock_create(int fd, sock_state_t state, int isclient, tunnel_t *tunnel);
 
-void sock_shutdown(sock_t *sock);
+void    sock_shutdown(sock_t *sock);
 
-void sock_force_shutdown(sock_t *sock);
+void    sock_force_shutdown(sock_t *sock);
 
-int sock_nonblocking(int fd);
+int     sock_nonblocking(int fd);
 
-int sock_keepalive(int fd);
+int     sock_keepalive(int fd);
 
-
-#endif //SOCK_H
+#endif // SOCK_H

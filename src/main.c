@@ -82,7 +82,7 @@ int main(int n, char **args)
 		username, passwd,
 		outfile);
 
-	log_init(outfile, LOG_LEVEL_INFO);
+	log_init(outfile, INFO);
 
 	if (strcmp(port, "") == 0 || strcmp(addr, "") == 0)
 	{
