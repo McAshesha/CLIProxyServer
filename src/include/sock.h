@@ -2,7 +2,7 @@
 #define SOCK_H
 
 
-#include "buff.h"
+#include "buffer.h"
 #include "tunnel.h"
 
 
@@ -21,24 +21,19 @@ struct sock {
     int fd;
     read_cb *read_handle;
     write_cb *write_handle;
-    buff_t *read_buff;
-    buff_t *write_buff;
+    buffer_t *read_buffer;
+    buffer_t *write_buffer;
     tunnel_t *tunnel;
     sock_state_t state;
-    int isclient;
+    int is_client;
 };
 
 
 int epoll_add(sock_t *sock);
 
-int epoll_del(const sock_t *sock);
-
 int epoll_modify(sock_t *sock, int writable, int readable);
 
-
 sock_t* sock_create(int fd, sock_state_t state, int isclient, tunnel_t * tunnel);
-
-void sock_release(sock_t *sock);
 
 void sock_shutdown(sock_t *sock);
 

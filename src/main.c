@@ -8,66 +8,81 @@
 
 #include "logger.h"
 #include "server.h"
+#include "terminal.h"
+
+
+typedef enum size_var
+{
+	SIZE_ADDR = 64,
+	SIZE_PORT = 16,
+	SIZE_OTH = 255
+}
+size_var_t;
 
 
 static void usage()
 {
-	LOG_WARN("Usage:\n"
-			"-o<optional> : logfile name\n"
-			"-a : ip address\n"
-			"-p : port \n"
-			"-u<optional> : username\n"
-			"-k<optional> : password\n"
-			);
+	LOG_WARN("Usage:\n");
+	LOG_WARN("-o<optional> : logfile name\n");
+	LOG_WARN("-a : ip address\n");
+	LOG_WARN("-p : port\n");
+	LOG_WARN("-u<optional> : username\n");
+	LOG_WARN("-k<optional> : password");
 }
 
-int main(int n, char **args)
+static void parse_args(int n, char **args,
+	char addr[64], char port[16],
+	char username[255],	char passwd[255],
+	char outfile[255])
 {
-	sigign();
-
 	char option;
-	char addr[64] = "";
-	char port[16] = "";
-	char username[255] = "";
-	char passwd[255] = "";
-	char outfile[255] = "";
-
 	while((option = getopt(n, args, "a:p:u:k:o:")) > 0)
 	{
 		switch(option)
 		{
 			case 'a':
 			{
-				strncpy(addr, optarg, sizeof(addr));
+				strncpy(addr, optarg, SIZE_ADDR);
 				break;
 			}
 			case 'p':
 			{
-				strncpy(port, optarg, sizeof(port));
+				strncpy(port, optarg, SIZE_PORT);
 				break;
 			}
 			case 'u':
 			{
-				strncpy(username, optarg, sizeof(username));
+				strncpy(username, optarg, SIZE_OTH);
 				break;
 			}
 			case 'k':
 			{
-				strncpy(passwd, optarg, sizeof(passwd));
+				strncpy(passwd, optarg, SIZE_OTH);
 				break;
 			}
 			case 'o':
 			{
-				strncpy(outfile, optarg, sizeof(outfile));
+				strncpy(outfile, optarg, SIZE_OTH);
 				break;
-			}
-			default:
-			{
-				usage();
-				return EXIT_FAILURE;
 			}
 		}
 	}
+}
+
+int main(int n, char **args)
+{
+	char addr[SIZE_ADDR] = "";
+	char port[SIZE_PORT] = "";
+	char username[SIZE_OTH] = "";
+	char passwd[SIZE_OTH] = "";
+	char outfile[SIZE_OTH] = "";
+
+	parse_args(n, args,
+		addr, port,
+		username, passwd,
+		outfile);
+
+	log_init(outfile, LOG_LEVEL_INFO);
 
 	if (strcmp(port, "") == 0 || strcmp(addr, "") == 0)
 	{
@@ -75,7 +90,9 @@ int main(int n, char **args)
 		return EXIT_FAILURE;
 	}
 
-	log_init(outfile, LOG_LEVEL_INFO);
+	sigign();
+	terminal_start();
+
 	LOG_INFO("Configured server at %s:%s (user=%s)", addr, port, username);
 
 	if (server_init(addr, port, username, passwd) < 0)
@@ -91,4 +108,5 @@ int main(int n, char **args)
 	}
 
 	return EXIT_SUCCESS;
+
 }

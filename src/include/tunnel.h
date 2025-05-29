@@ -37,18 +37,12 @@ tunnel_t* tunnel_create(int fd);
 
 void tunnel_release(tunnel_t *tunnel);
 
-void tunnel_shutdown(tunnel_t *tunnel);
-
 void tunnel_read_handle(int fd, void *ud);
 
 void tunnel_write_handle(int fd, void *ud);
 
-int tunnel_connected_handle(tunnel_t *tunnel, int client);
-
-int tunnel_notify_connected(tunnel_t *tunnel);
-
 int tunnel_write_client(tunnel_t *tunnel, void *src, size_t size);
 
-int tunnel_connecting_handle(tunnel_t *tunnel);
+int tunnel_connect_to_remote(tunnel_t *tunnel);
 
 #endif //TUNNEL_H

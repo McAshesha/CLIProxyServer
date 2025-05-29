@@ -8,6 +8,7 @@
 #include <string.h>
 #include <netinet/in.h>
 #include <sys/epoll.h>
+#include <stdlib.h>
 
 #include "sock.h"
 #include "logger.h"
@@ -38,6 +39,12 @@ static void accept_handle()
 	tunnel_create(newfd);
 }
 
+static void handle_signal()
+{
+	EXTRA_LOG_WARN("The proxy server was forcibly stopped");
+	exit(EXIT_SUCCESS);
+}
+
 void sigign()
 {
 	struct sigaction sa;
@@ -45,6 +52,7 @@ void sigign()
 	sa.sa_flags = 0;
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGPIPE, &sa, 0);
+	signal(SIGINT, handle_signal);
 }
 
 int server_start()

@@ -27,7 +27,7 @@ int epoll_add(sock_t *sock)
 	return epoll_ctl(SERVER.epollfd, EPOLL_CTL_ADD, sock->fd, &event);
 }
 
-int epoll_del(const sock_t *sock)
+static int epoll_del(const sock_t *sock)
 {
 	epoll_event_t event;
 	return epoll_ctl(SERVER.epollfd, EPOLL_CTL_DEL, sock->fd, &event);
@@ -47,37 +47,37 @@ sock_t* sock_create(int fd, sock_state_t state, int isclient, tunnel_t * tunnel)
 	if (sock == NULL) return NULL;
 	memset(sock, 0, sizeof(*sock));
 
-	buff_t *read_buff = buff_create(INIT_BUFF_CAP);
+	buffer_t *read_buff = buffer_create(INIT_BUFF_CAP);
 	if (read_buff == NULL) return NULL;
 
-	buff_t *write_buff = buff_create(INIT_BUFF_CAP);
+	buffer_t *write_buff = buffer_create(INIT_BUFF_CAP);
 	if (write_buff == NULL) {
-		buff_release(read_buff);
+		buffer_release(read_buff);
 		free(sock);
 		return NULL;
 	}
 
-	sock->read_buff = read_buff;
-	sock->write_buff = write_buff;
+	sock->read_buffer = read_buff;
+	sock->write_buffer = write_buff;
 	sock->tunnel = tunnel;
 	sock->fd = fd;
 	sock->read_handle = tunnel_read_handle;
 	sock->write_handle = tunnel_write_handle;
 	sock->state = state;
-	sock->isclient = isclient;
+	sock->is_client = isclient;
 	return sock;
 }
 
-void sock_release(sock_t *sock)
+static void sock_release(sock_t *sock)
 {
 	LOG_INFO("Closed and released sock fd=%d", sock->fd);
 
 	tunnel_t *tunnel = sock->tunnel;
 
-	buff_release(sock->write_buff);
-	buff_release(sock->read_buff);
+	buffer_release(sock->write_buffer);
+	buffer_release(sock->read_buffer);
 
-	if (sock->isclient) tunnel->client_sock = NULL;
+	if (sock->is_client) tunnel->client_sock = NULL;
 	else tunnel->remote_sock = NULL;
 	epoll_del(sock);
 	close(sock->fd);
@@ -115,13 +115,13 @@ void sock_shutdown(sock_t *sock)
 	tunnel_t *tunnel = sock->tunnel;
 	// forward left data
 	if (tunnel->state == connected_state) {
-		if (sock->isclient && tunnel->remote_sock != NULL)
-			buff_concat(tunnel->remote_sock->write_buff, sock->read_buff);
+		if (sock->is_client && tunnel->remote_sock != NULL)
+			buffer_concat(tunnel->remote_sock->write_buffer, sock->read_buffer);
 		else if(tunnel->client_sock != NULL)
-			buff_concat(tunnel->client_sock->write_buff, sock->read_buff);
+			buffer_concat(tunnel->client_sock->write_buffer, sock->read_buffer);
 	}
 
-	int writable = buff_readable(sock->write_buff) > 0;
+	int writable = buffer_readable(sock->write_buffer) > 0;
 	if (writable) epoll_modify(sock, writable, 0);
 	else sock_force_shutdown(sock);
 }
