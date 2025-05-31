@@ -1,6 +1,6 @@
 # CLIProxyServer
 
-CLIProxyServer is a next-level, SOCKS5-powered proxy server built in C. 🚀 It’s the plug between your client and the target server, catching every TCP/UDP packet and decoding HTTP & WebSocket traffic in real-time. With dope “freeze” and “stop” commands you can flex from the terminal, it keeps you fully in control. Powered by slick non-blocking I/O (epoll), dynamic buffers, and a clean modular setup, this beast delivers scalable, low-latency performance that’s ready for whatever traffic you throw at it.
+CLIProxyServer is a next-level, SOCKS5-powered proxy server built in C for Linux (Windows byebye!). 🚀 It’s the plug between your client and the target server, catching every TCP/UDP packet and decoding HTTP & WebSocket traffic in real-time. With dope “freeze” and “stop” commands you can flex from the terminal, it keeps you fully in control. Powered by slick non-blocking I/O (epoll), dynamic buffers, and a clean modular setup, this beast delivers scalable, low-latency performance that’s ready for whatever traffic you throw at it.
 
 ## Table of Contents
 
