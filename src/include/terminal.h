@@ -3,18 +3,18 @@
 
 #include <stdbool.h>
 
-/**
- * Start background thread to read console commands.
- * Commands:
- *   freeze – toggle freeze mode
- *   stop   – gracefully shutdown via SIGINT
+/*
+ * Запускает фоновый поток, который читает команды из stdin.
+ * Поддержка команд:
+ * freeze — ставит паузу на форвардинг пакетов
+ * stop   — корректно выключает программу (через SIGINT)
  */
-void  terminal_start(void);
+void terminal_start(void);
 
-/**
- * Check if proxy is currently frozen.
- * User code (e.g. tunnel_connected_handle) can skip forwarding when true.
+/*
+ * Проверяет, включён ли сейчас режим «freeze».
+ * Если true — туннель читает и логирует данные, но не шлёт дальше.
  */
-bool  terminal_is_frozen(void);
+bool terminal_is_frozen(void);
 
 #endif // TERMINAL_H

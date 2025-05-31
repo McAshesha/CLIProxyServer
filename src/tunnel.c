@@ -21,13 +21,23 @@
 #include "terminal.h"
 
 
-
+/**
+ * Обработка ошибок EAGAIN и EWOULDBLOCK: если они различны,
+ * добавить оба в список возможных ошибок неблокирующего ввода-вывода.
+ */
 #if (EAGAIN != EWOULDBLOCK)
 	#define EAGAIN_EWOULDBLOCK EAGAIN : case EWOULDBLOCK
 #else
 	#define EAGAIN_EWOULDBLOCK EAGAIN
 #endif
 
+
+typedef enum protocol_atyp
+{
+	IPV4   = 0x01,
+	IPV6   = 0x04,
+	DOMAIN = 0x03
+} protocol_atyp_t;
 
 typedef struct sockaddr sockaddr_t;
 
@@ -37,43 +47,62 @@ typedef struct sockaddr_in6 sockaddr_in6_t;
 
 typedef struct addrinfo addrinfo_t;
 
-
+/**
+ * Создаёт структуру туннеля для вновь принятого клиентского соединения.
+ * Переходит в состояние 'open_state' (ожидание Client Greeting).
+ * Настраивает клиентский сокет неблокирующим и с keepalive.
+ * В случае ошибки освобождает ресурсы и закрывает дескриптор.
+ */
 tunnel_t* tunnel_create(int fd)
 {
+	// Переводим клиентский FD в неблокирующий режим
 	sock_nonblocking(fd);
+	// Включаем TCP keepalive для контроля живости соединения
 	sock_keepalive(fd);
 
 	tunnel_t *tunnel = (tunnel_t*)malloc(sizeof(*tunnel));
 	if (tunnel == NULL)
 	{
+		// При нехватке памяти закрываем сокет
 		close(fd);
 		return NULL;
 	}
+	// Обнуляем все поля структуры для корректной инициализации
 	memset(tunnel, 0, sizeof(*tunnel));
 
+	// Создаём обёртку sock_t для клиентского сокета
 	sock_t *client_sock = sock_create(fd, sock_connected, 1, tunnel);
 	if (client_sock == NULL)
 	{
+		// При ошибке освобождаем память и закрываем FD
 		free(tunnel);
 		close(fd);
 		return NULL;
 	}
 
-	tunnel->state = open_state;
-	tunnel->client_sock = client_sock;
-	tunnel->read_count = 0;
-	tunnel->closed = 0;
+	tunnel->state = open_state;             // стартовое состояние SOCKS5
+	tunnel->client_sock = client_sock;      // сохраняем клиентский сокет
+	tunnel->read_count = 0;                 // сбрасываем счётчик прочитанных байт
+	tunnel->closed = 0;                     // флаг закрытия туннеля
 
+	// Регистрируем клиентский сокет в epoll для чтения
 	epoll_add(client_sock);
 
 	return tunnel;
 }
 
+/**
+ * Полностью освобождает память, занятую структурой туннеля.
+ */
 void tunnel_release(tunnel_t *tunnel)
 {
 	free(tunnel);
 }
 
+/**
+ * Закрывает оба сокета (клиента и удалённого) мягко,
+ * позволяя завершить отправку накопленных данных.
+ */
 static void tunnel_shutdown(tunnel_t *tunnel)
 {
 	if (tunnel->client_sock != NULL)
@@ -86,34 +115,44 @@ static void tunnel_shutdown(tunnel_t *tunnel)
 	}
 }
 
+// Прототипы внутренних обработчиков состояний
 static int tunnel_connected_handle(tunnel_t *tunnel, int is_client);
 
 static int tunnel_connecting_handle(tunnel_t *tunnel);
 
 
+/**
+ * Обработчик EPOLLIN: получение данных из сокета.
+ * В зависимости от текущего состояния state вызывает соответствующий
+ * этап протокола SOCKS5 или 처리 туннеля.
+ */
 void tunnel_read_handle(int fd, void *ud)
 {
 	sock_t *sock = (sock_t*)ud;
 	tunnel_t *tunnel = sock->tunnel;
 
+	// Считываем доступные данные в buffer_read_buffer
 	int n = buffer_readfd(sock->read_buffer, fd);
 	if (n < 0)
 	{
+		// Обрабатываем прерывание или временную недоступность
 		switch (errno)
 		{
 			case EINTR:
 			case EAGAIN_EWOULDBLOCK:
 				break;
 			default:
-				goto shutdown;
+				goto shutdown; // критическая ошибка
 		}
 
 	}
 	else if (n == 0)
 	{
+		// peer выполнил shutdown -> полухлопок
 		goto shutdown;
 	}
 
+	// В зависимости от состояния туннеля вызываем соответствующий хэндлер
 	switch (tunnel->state)
 	{
 		case open_state:
@@ -144,36 +183,43 @@ void tunnel_read_handle(int fd, void *ud)
 		}
 		default:
 		{
-			assert(0);
+			assert(0); // недопустимое состояние
 			break;
 		}
 	}
 
+	// Логируем факт чтения и текущее состояние
 	LOG_INFO("Read %d bytes from %s (fd=%d), state=%d",
 		 n, sock->is_client ? "client" : "remote", fd, tunnel->state);
 
 	return;
 
-force_shutdown: // peer invalid
+force_shutdown: // команда peer некорректна, принудительное завершение
 	LOG_WARN("Read returned %d on fd=%d – initiating shutdown", n, fd);
 	sock_force_shutdown(sock);
 	return;
 
-shutdown: // half closed
+shutdown: // мягкое завершение после EOF или ошибки
 	LOG_WARN("Read returned %d on fd=%d – initiating shutdown", n, fd);
 	sock_shutdown(sock);
 	return;
 
-tunnel_shutdown: // half closed both client and remote
+tunnel_shutdown: // завершение всего туннеля при ошибке
 	LOG_WARN("Read returned %d on fd=%d – initiating shutdown", n, fd);
 	tunnel_shutdown(tunnel);
 }
 
+/**
+ * Обработчик EPOLLOUT: попытка записи накопленных данных из буфера.
+ * При отсутствии данных и закрытом состоянии сокета инициирует shutdown.
+ * При соединении проверяет статус неблокирующего connect.
+ */
 void tunnel_write_handle(int fd, void *ud)
 {
 	sock_t *sock = (sock_t *)ud;
 	tunnel_t *tunnel = sock->tunnel;
 
+	// Если есть данные для записи — пытаемся отправить
 	if (buffer_readable(sock->write_buffer) > 0)
 	{
 		int n = buffer_writefd(sock->write_buffer, fd);
@@ -193,9 +239,11 @@ void tunnel_write_handle(int fd, void *ud)
 	}
 	else if (sock->state == sock_halfclosed)
 	{
+		// Если удалённый сокет закрыл запись — принудительно завершаем
 		goto force_shutdown;
 	}
 
+	// В состоянии подключения проверяем завершение неблокирующего connect
 	if (tunnel->state == connecting_state)
 	{
 		assert(sock->is_client == 0);
@@ -206,23 +254,28 @@ void tunnel_write_handle(int fd, void *ud)
 		}
 	}
 
+	// Обновляем события epoll: интерес к записи, если остались данные
 	int writable = buffer_readable(sock->write_buffer) > 0;
 	epoll_modify(sock, writable, 1);
 
 	return;
 
+// Закрываем весь туннель при серьёзной ошибке записи
 tunnel_shutdown:
 	tunnel_shutdown(tunnel);
 	LOG_ERROR("Write error on fd=%d: %s", fd, strerror(errno));
 	return;
 
-force_shutdown:
+force_shutdown: // принудительное завершение только данного сокета
 	sock_force_shutdown(sock);
 	LOG_ERROR("Write error on fd=%d: %s", fd, strerror(errno));
 	return;
 }
 
-// Dump up to first 128 bytes (to avoid huge logs); adjust as needed
+/**
+ * Вспомогательный вывод данных в шестнадцатеричном виде.
+ * Ограничиваем логирование первыми 128 байтами для читаемости.
+ */
 static void dump_hex(const char *label, const uint8_t *buf, size_t len)
 {
 	size_t max = len < 128 ? len : 128;
@@ -230,14 +283,21 @@ static void dump_hex(const char *label, const uint8_t *buf, size_t len)
 	char *p = hexstr;
 	for (size_t i = 0; i < max; i++)
 	{
+		// Формируем текст вида "ab cd ef ..."
 		p += sprintf(p, "%02x ", buf[i]);
 	}
 	LOG_INFO("%s hex (%zu bytes): %s% s", label, len, hexstr,
 			 (len > max ? "...(truncated)" : ""));
 }
 
+/**
+ * Обработка уже установленного туннеля: анализ и форвардинг данных.
+ * Если не удалось распарсить HTTP/WebSocket — делаем hex-dump.
+ * При активном флаге freeze пропускаем форвардинг.
+ */
 static int tunnel_connected_handle(tunnel_t *tunnel, int is_client)
 {
+	// Определяем направления read/write: front - куда писать, rear - откуда читать
 	sock_t *sock_front = is_client ? tunnel->remote_sock : tunnel->client_sock;
 	sock_t *sock_rear = is_client ? tunnel->client_sock : tunnel->remote_sock;
 
@@ -245,6 +305,7 @@ static int tunnel_connected_handle(tunnel_t *tunnel, int is_client)
 
 	if (sock_front == NULL)
 	{
+		// Отсутствие противоположного сокета — фатальная ошибка
 		return -1;
 	}
 
@@ -252,37 +313,48 @@ static int tunnel_connected_handle(tunnel_t *tunnel, int is_client)
 	uint8_t *buffer_data = (uint8_t *) rear_buffer->data + rear_buffer->read_index;
 	size_t length = buffer_readable(rear_buffer);
 
+	// Пытаемся логировать HTTP или WebSocket
 	if (!parse_and_log_http(buffer_data, length, is_client) &&
 		!parse_and_log_websocket(buffer_data, length, is_client))
 	{
+		// Если оба разбора не сработали — выводим hex
 		dump_hex(label, buffer_data, length);
 	}
 
-	// Если команда freeze активна — читаем, логируем, но не форвардим
+	// Если пользователь заморозил туннель — не пересылаем данные дальше
 	if (terminal_is_frozen())
 	{
 		return 0;
 	}
 
+	// Переносим данные из read_buffer в write_buffer противопололожного сокета
 	if (buffer_concat(sock_front->write_buffer, rear_buffer) < 0)
 	{
 		return -1;
 	}
-	buffer_clear(rear_buffer);
+    buffer_clear(rear_buffer);  // очищаем буфер после успешной конкатенации
+
+	// Обновляем epoll: включаем интерес к записи на front-сокете
 	epoll_modify(sock_front, 1, 1);
 
 	return 0;
 }
 
+/**
+ * Отправляет клиенту ответ о успешном подключении SOCKS5.
+ * В зависимости от семейства адреса (IPv4/IPv6) формирует тело ответа.
+ */
 static int tunnel_notify_connected(tunnel_t *tunnel)
 {
 	sockaddr_t sa;
 	socklen_t len = sizeof(sa);
 	uint8_t header[4];
-	header[0] = 0x05; // socks5
-	header[1] = 0x00; // success
-	header[2] = 0x00;
 
+	header[0] = 0x05;  // версия SOCKS5
+	header[1] = 0x00;  // статус: успех
+	header[2] = 0x00;  // зарезервировано
+
+	// Извлекаем локальный адрес удалённого сокета
 	if (getsockname(tunnel->remote_sock->fd, &sa, &len) < 0)
 	{
 		return -1;
@@ -290,7 +362,7 @@ static int tunnel_notify_connected(tunnel_t *tunnel)
 
 	if (sa.sa_family == AF_INET)
 	{
-		header[3] = 0x01; //IPV4
+        header[3] = IPV4; // тип адреса: IPv4
 		if (tunnel_write_client(tunnel, header, sizeof(header)) < 0)
 		{
 			return -1;
@@ -308,7 +380,7 @@ static int tunnel_notify_connected(tunnel_t *tunnel)
 	}
 	else if (sa.sa_family == AF_INET6)
 	{
-		header[3] = 0x04; //IPV6
+        header[3] = IPV6; // тип адреса: IPv6
 		tunnel_write_client(tunnel, header, sizeof(header));
 
 		sockaddr_in6_t *sa_in6 = (sockaddr_in6_t*)&sa;
@@ -317,6 +389,7 @@ static int tunnel_notify_connected(tunnel_t *tunnel)
 	}
 	else
 	{
+		// Неподдерживаемое семейство адресов
 		LOG_ERROR("Failed tunnel_notify_connected, unexpected family=%d", sa.sa_family);
 		return -1;
 	}
@@ -326,6 +399,10 @@ static int tunnel_notify_connected(tunnel_t *tunnel)
 	return 0;
 }
 
+/**
+ * Записывает произвольный блок данных в буфер клиента и активирует
+ * epoll-событие на запись. Используется для формирования ответов.
+ */
 int tunnel_write_client(tunnel_t *tunnel, void *src, size_t size)
 {
 	if (tunnel->client_sock == NULL)
@@ -342,15 +419,16 @@ int tunnel_write_client(tunnel_t *tunnel, void *src, size_t size)
 	return 0;
 }
 
+/**
+ * Обрабатывает завершение неблокирующего connect(): проверка через getsockopt.
+ * Если соединение установлено — переходим в connected_state и уведомляем клиент.
+ */
 static int tunnel_connecting_handle(tunnel_t *tunnel)
 {
 	int error;
 	socklen_t len = sizeof(error);
 	int code = getsockopt(tunnel->remote_sock->fd, SOL_SOCKET, SO_ERROR, &error, &len);
-	/*
-	 * If error occur, Solairs return -1 and set error to errno.
-	 * Berkeley return 0 but not set errno.
-	 */
+	// Разные реализации возвращают ошибки по-разному
 	if (code < 0 || error)
 	{
 		if (error)
@@ -367,6 +445,10 @@ static int tunnel_connecting_handle(tunnel_t *tunnel)
 	return tunnel_notify_connected(tunnel);
 }
 
+/**
+ * Инициирует подключение к удалённому хосту по параметрам из request_protocol_t.
+ * Выполняет DNS-разрешение, создаёт неблокирующий сокет и запускает connect().
+ */
 int tunnel_connect_to_remote(tunnel_t *tunnel)
 {
 	uint8_t atyp = tunnel->rp.atyp;
@@ -374,38 +456,37 @@ int tunnel_connect_to_remote(tunnel_t *tunnel)
 	char ip[64];
 	char port[16];
 
+	// Преобразуем порт в строковый формат
 	snprintf(port, sizeof(port),"%d", ntohs(tunnel->rp.port));
 	switch(atyp)
 	{
-		case 0x01:
-		{
-			// ipv4
+        case IPV4: // IPv4
+        {
 			inet_ntop(AF_INET, tunnel->rp.addr, ip, sizeof(ip));
 			addr = ip;
 			break;
 		}
-		case 0x04:
+        case IPV6: // IPv6
 		{
-			// ipv6
 			inet_ntop(AF_INET6, tunnel->rp.addr, ip, sizeof(ip));
 			addr = ip;
 			break;
 		}
-		case 0x03:
+        case DOMAIN: // доменное имя
 		{
-			// domain
 			addr = tunnel->rp.addr;
 			break;
 		}
 		default:
 		{
-			assert(0);
+            assert(0); // неожиданное значение atyp
 			break;
 		}
 	}
 
 	LOG_INFO("Resolving %s:%s", addr, port);
 
+	// Настраиваем параметры getaddrinfo
 	addrinfo_t ai_hint;
 	memset(&ai_hint, 0, sizeof(ai_hint));
 
@@ -416,7 +497,7 @@ int tunnel_connect_to_remote(tunnel_t *tunnel)
 	addrinfo_t *ai_list;
 	addrinfo_t *ai_ptr;
 
-	// TODO: getaddrinfo is a block function, try doing it in thread
+    // Перебираем все возможные адреса до первого успешного connect()
 	if (getaddrinfo(addr, port, &ai_hint, &ai_list) != 0)
 	{
 		LOG_ERROR("Failed getaddrinfo, addr=%s,port=%s, error=%s", addr, port, gai_strerror(errno));
@@ -442,6 +523,7 @@ int tunnel_connect_to_remote(tunnel_t *tunnel)
 
 		if (status != 0 && errno != EINPROGRESS)
 		{
+			// Ошибка немедленного подключения
 			close(newfd);
 			newfd = -1;
 			LOG_ERROR("Connect failed to %s:%s: %s", addr, port, gai_strerror(errno));
@@ -457,6 +539,7 @@ int tunnel_connect_to_remote(tunnel_t *tunnel)
 		return -1;
 	}
 
+	// Создаём обёртку sock_t для удалённого сокета
 	sock_t *sock = sock_create(newfd, sock_connecting, 0, tunnel);
 	if (sock == NULL)
 	{
@@ -470,12 +553,14 @@ int tunnel_connect_to_remote(tunnel_t *tunnel)
 
 	if (status == 0)
 	{
+		// Соединение завершилось мгновенно
 		tunnel->state = connected_state;
 		sock->state = sock_connected;
 		return tunnel_notify_connected(tunnel);
 	}
 	else
 	{
+		// Ожидаем завершения неблокирующего connect
 		tunnel->state = connecting_state;
 		sock->state = sock_connecting;
 	}
