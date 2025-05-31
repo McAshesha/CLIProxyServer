@@ -197,7 +197,7 @@ int server_init(char *host, char *port, char *username, char *passwd)
         return -1;
     }
 
-    LOG_INFO("Listening socket fd=%d bound to %s:%s", host, port, listenfd);
+    LOG_INFO("Listening socket fd=%d bound to %s:%s", listenfd, host, port);
 
     // Создаём epoll-инстанс для мониторинга событий
     int epollfd = epoll_create(1);
