@@ -197,4 +197,3 @@ We’re always looking for rad improvements (🔥), so don’t hesitate to propo
 ## License
 
 CLIProxyServer is distributed under the MIT License. See [LICENSE](LICENSE) for details.
-(I didn't have time to add anything. I'll add later. TODO)
