@@ -1,6 +1,6 @@
 # CLIProxyServer
 
-CLIProxyServer is a next-level, SOCKS5-powered proxy server built in C for Linux (Windows byebye!). 🚀 It’s the plug between your client and the target server, catching every TCP/UDP packet and decoding HTTP & WebSocket traffic in real-time. With dope “freeze” and “stop” commands you can flex from the terminal, it keeps you fully in control. Powered by slick non-blocking I/O (epoll), dynamic buffers, and a clean modular setup, this beast delivers scalable, low-latency performance that’s ready for whatever traffic you throw at it.
+🚀 **CLIProxyServer** is a next-level, SOCKS5‑powered proxy server built in C for Linux (Windows byebye!). It’s the plug between your client and the target server, catching every TCP/UDP packet and decoding HTTP & WebSocket traffic in real time. With dope “freeze” and “stop” commands you can flex from the terminal, it keeps you fully in control. Powered by slick non‑blocking I/O (epoll), dynamic buffers, and a clean modular setup, this beast delivers scalable, low‑latency performance that’s ready for whatever traffic you throw at it.
 
 ## Table of Contents
 
@@ -17,17 +17,17 @@ CLIProxyServer is a next-level, SOCKS5-powered proxy server built in C for Linux
 
 ## Features
 
-* **SOCKS5 Handshake & Authentication**
-  Implements full SOCKS5 protocol: greeting, optional USER/PASS (RFC1929), and CONNECT commands. 🛡️
+* 🛡️ **SOCKS5 Handshake & Authentication**
+  Implements full SOCKS5 protocol: greeting, optional USER/PASS (RFC1929), and CONNECT commands.
 * **Dynamic Buffering**
-  Uses dynamically expanding FIFO buffers for TCP/UDP (UDP no :) TODO ) payloads—no fixed-size limits.
-* **HTTP & WebSocket Parsing**
-  Parses and logs HTTP headers and WebSocket text frames in real time. Unrecognized traffic is hex-dumped.
-* **Non-Blocking I/O (epoll)**
+  Uses dynamically expanding FIFO buffers for TCP/UDP (UDP no :) TODO ) payloads—no fixed‑size limits.
+* 💬 **HTTP & WebSocket Parsing**
+  Parses and logs HTTP headers and WebSocket text frames in real time. Unrecognized traffic is hex‑dumped.
+* ⚡ **Non‑Blocking I/O (epoll)**
   Scales to many simultaneous connections with minimal overhead.
-* **Interactive Terminal Control**
-  A separate thread listens for `freeze` (pause forwarding) and `stop` (graceful shutdown) commands. ❄️
-* **Modular Architecture**
+* ❄️ **Interactive Terminal Control**
+  A separate thread listens for `freeze` (pause forwarding) and `stop` (graceful shutdown) commands.
+* 🧩 **Modular Architecture**
   Clear separation of concerns: buffering, socket abstraction, protocol parsing, tunneling, and logging.
 
 ---
@@ -84,7 +84,7 @@ sudo pacman -Syu base-devel cmake ncurses
 
    This produces the `CLIProxyServer` executable in `build/`.
 
-4. (Optional) **Install to /usr/local/bin**:
+4. *(Optional)* **Install to /usr/local/bin**:
 
    ```bash
    sudo make install
@@ -146,9 +146,9 @@ Once running, open a separate terminal window to issue control commands to the p
    ./CLIProxyServer -a 0.0.0.0 -p 1080
    ```
 
-    * Listens on all interfaces (IPv4) at port 1080.
-    * Uses SOCKS5 “no auth” mode.
-    * Logs appear in the terminal.
+   * Listens on all interfaces (IPv4) at port 1080.
+   * Uses SOCKS5 “no auth” mode.
+   * Logs appear in the terminal.
 
 2. **Run with USER/PASS authentication and log to a file**:
 
@@ -156,30 +156,30 @@ Once running, open a separate terminal window to issue control commands to the p
    ./CLIProxyServer -a 127.0.0.1 -p 1080 -u admin -k secret -o /var/log/cli_proxy.log
    ```
 
-    * Binds to `127.0.0.1:1080`.
-    * Requires clients to authenticate with username `admin` and password `secret`.
-    * Appends all logs to `/var/log/cli_proxy.log`.
+   * Binds to `127.0.0.1:1080`.
+   * Requires clients to authenticate with username `admin` and password `secret`.
+   * Appends all logs to `/var/log/cli_proxy.log`.
 
 3. **Pause forwarding traffic (freeze mode)**:
 
-    * In the main proxy window run:
+   * In the main proxy window run:
 
-      ```bash
-      freeze
-      ```
+     ```bash
+     freeze
+     ```
 
-    * All incoming/outgoing packets are logged but not forwarded until “freeze” is toggled off.
+   * All incoming/outgoing packets are logged but not forwarded until “freeze” is toggled off.
 
 4. **Graceful shutdown**:
 
-    * Type `stop` in the proxy’s stdin or send `SIGINT` (Ctrl+C) to terminate gracefully.
-    * Ensures pending buffers are flushed before exit.
+   * Type `stop` in the proxy’s stdin or send `SIGINT` (Ctrl+C) to terminate gracefully.
+   * Ensures pending buffers are flushed before exit.
 
 ---
 
 ## Contributing
 
-✨ Low-key excited that you’re thinking of jumping in! Here’s how to get involved:
+✨ Low‑key excited that you’re thinking of jumping in! Here’s how to get involved:
 
 1. **Fork** the repository and create a new feature branch:
 
@@ -188,9 +188,9 @@ Once running, open a separate terminal window to issue control commands to the p
    ```
 2. Make your changes, ensuring you maintain code clarity and consistent style (C11, meaningful variable names, open braces, etc.).
 3. **Test** your modifications thoroughly—epoll behavior, buffer growth, SOCKS5 handshake, and terminal commands.
-4. **Submit a Pull Request**. We’ll review and merge if it aligns with our forward-thinking design.
+4. **Submit a Pull Request**. We’ll review and merge if it aligns with our forward‑thinking design.
 
-We’re always looking for rad improvements (🔥), so don’t hesitate to propose new features—maybe UDP ASSOCIATE support or advanced logging filters!
+🔥 We’re always looking for rad improvements, so don’t hesitate to propose new features—maybe UDP ASSOCIATE support or advanced logging filters!
 
 ---
 
