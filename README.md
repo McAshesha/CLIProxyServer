@@ -1,8 +1,8 @@
-# CLIProxyServer
+# 🚀 CLIProxyServer
 
 🚀 **CLIProxyServer** is a next-level, SOCKS5‑powered proxy server built in C for Linux (Windows byebye!). It’s the plug between your client and the target server, catching every TCP/UDP packet and decoding HTTP & WebSocket traffic in real time. With dope “freeze” and “stop” commands you can flex from the terminal, it keeps you fully in control. Powered by slick non‑blocking I/O (epoll), dynamic buffers, and a clean modular setup, this beast delivers scalable, low‑latency performance that’s ready for whatever traffic you throw at it.
 
-## Table of Contents
+## 📚 Table of Contents
 
 * [Features](#features)
 * [Prerequisites](#prerequisites)
@@ -15,7 +15,7 @@
 
 ---
 
-## Features
+## ✨ Features
 
 * 🛡️ **SOCKS5 Handshake & Authentication**
   Implements full SOCKS5 protocol: greeting, optional USER/PASS (RFC1929), and CONNECT commands.
@@ -32,7 +32,7 @@
 
 ---
 
-## Prerequisites
+## 🛠️ Prerequisites
 
 Ensure you have the following installed on your system:
 
@@ -57,7 +57,7 @@ sudo pacman -Syu base-devel cmake ncurses
 
 ---
 
-## Build & Install
+## 🏗️ Build & Install
 
 1. **Clone the repository**:
 
@@ -98,7 +98,7 @@ sudo pacman -Syu base-devel cmake ncurses
 
 ---
 
-## Usage
+## 🖥️ Usage
 
 ```bash
 ./CLIProxyServer -a <bind_address> -p <bind_port> [options]
@@ -126,7 +126,7 @@ Once running, open a separate terminal window to issue control commands to the p
 
 ---
 
-## Options
+## ⚙️ Options
 
 | Option          | Description                                                 |
 | --------------- | ----------------------------------------------------------- |
@@ -138,7 +138,7 @@ Once running, open a separate terminal window to issue control commands to the p
 
 ---
 
-## Examples
+## 💡 Examples
 
 1. **Run without authentication, logging to console**:
 
@@ -177,7 +177,7 @@ Once running, open a separate terminal window to issue control commands to the p
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 ✨ Low‑key excited that you’re thinking of jumping in! Here’s how to get involved:
 
@@ -194,6 +194,6 @@ Once running, open a separate terminal window to issue control commands to the p
 
 ---
 
-## License
+## 📝 License
 
 CLIProxyServer is distributed under the MIT License. See [LICENSE](LICENSE) for details.
